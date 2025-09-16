@@ -12,6 +12,14 @@ from sklearn.metrics import (
     confusion_matrix,
 )
 
+# Paksa MLflow pakai folder lokal 'mlruns' di project
+mlruns_path = os.path.abspath("./mlruns")
+mlflow.set_tracking_uri(f"file://{mlruns_path}")
+
+# Pastikan folder artifact ada
+artifact_dir = os.path.join(mlruns_path, "artifacts")
+os.makedirs(artifact_dir, exist_ok=True)
+
 # Load dataset dari CSV (versi DVC)
 df = pd.read_csv("data/iris.csv")
 X = df.drop("target", axis=1)
@@ -24,10 +32,6 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 # Aktifkan autolog MLflow
 mlflow.sklearn.autolog()
-
-# Ambil artifact folder dari environment, fallback ke 'mlruns' jika tidak ada
-artifact_dir = os.getenv("MLFLOW_ARTIFACT_URI", "mlruns")
-os.makedirs(artifact_dir, exist_ok=True)
 
 with mlflow.start_run():
     # Inisialisasi model
