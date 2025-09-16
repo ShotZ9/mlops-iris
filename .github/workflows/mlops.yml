@@ -24,7 +24,7 @@ jobs:
           pip install -r requirements.txt
           pip install mlflow "dvc[s3]>=3.50.0" scikit-learn
 
-      # Setup DVC remote for Backblaze B2
+      # Setup DVC remote for Backblaze B2 (optional)
       # - name: Configure DVC remote
       #   run: |
       #     dvc remote add -d -f b2remote s3://$B2_BUCKET_NAME
@@ -40,5 +40,13 @@ jobs:
       - name: Pull dataset with DVC
         run: dvc pull -r b2remote
 
+      # Buat folder mlruns agar MLflow bisa log artifact tanpa permission error
+      - name: Setup MLflow artifact folder
+        run: mkdir -p mlruns
+        env:
+          MLFLOW_ARTIFACT_URI: ./mlruns
+
       - name: Run training with MLflow
+        env:
+          MLFLOW_ARTIFACT_URI: ./mlruns
         run: python src/train.py
