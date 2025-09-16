@@ -22,24 +22,23 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install mlflow "dvc[gdrive]>=3.50.0" scikit-learn
+          pip install mlflow "dvc[s3]>=3.50.0" scikit-learn
 
-      # Debug optional: cek secret valid JSON
-      - name: Debug Secret Format
+      # Setup DVC remote for Backblaze B2
+      - name: Configure DVC remote
         run: |
-          echo "$GDRIVE_CREDENTIALS_DATA" | jq . > /dev/null
+          dvc remote add -d b2remote s3://$B2_BUCKET_NAME
+          dvc remote modify b2remote endpointurl $B2_ENDPOINT
+          dvc remote modify b2remote access_key_id $B2_KEY_ID
+          dvc remote modify b2remote secret_access_key $B2_APP_KEY
         env:
-          GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
-
-      - name: Save service account credentials
-        run: |
-          mkdir -p .dvc
-          echo '${{ secrets.GDRIVE_CREDENTIALS_DATA }}' | jq . > .dvc/sa.json
+          B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+          B2_ENDPOINT: ${{ secrets.B2_ENDPOINT }}
+          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+          B2_APP_KEY: ${{ secrets.B2_APP_KEY }}
 
       - name: Pull dataset with DVC
-        run: |
-          dvc pull -r gdrive_remote
+        run: dvc pull -r b2remote
 
       - name: Run training with MLflow
-        run: |
-          python src/train.py
+        run: python src/train.py

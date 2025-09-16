@@ -1,7 +1,17 @@
 [core]
-    remote = gdrive_remote
+    remote = b2remote
+['remote "b2remote"']
+    url = s3://mlops-iris-bucket
+    endpointurl = https://s3.us-east-005.backblazeb2.com
+    access_key_id = 00506c08de46f030000000001
+    secret_access_key = K005CLg05x4/5t31wb58I8q4eGPS2Ts
 
-['remote "gdrive_remote"']
-    url = gdrive://1z7dbARF5-1Dwpf6xEFuHZ7L38TzTa2pA
-    gdrive_use_service_account = true
-    gdrive_service_account_json_file_path = sa.json
+# // 00506c08de46f030000000001
+# // s3.us-east-005.backblazeb2.com
+# // K005CLg05x4/5t31wb58I8q4eGPS2Ts
+# // mlops-iris-bucket
+
+# // dvc remote add -d b2remote s3://mlops-iris-bucket
+# // dvc remote modify b2remote endpointurl https://s3.us-east-005.backblazeb2.com
+# // dvc remote modify b2remote access_key_id 00506c08de46f030000000001
+# // dvc remote modify b2remote secret_access_key K005CLg05x4/5t31wb58I8q4eGPS2Ts
