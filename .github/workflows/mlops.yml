@@ -30,10 +30,14 @@ jobs:
         env:
           GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
 
+      - name: Save service account credentials
+        run: |
+          echo '${{ secrets.GDRIVE_CREDENTIALS_DATA }}' > sa.json
+        shell: bash
 
       - name: Pull dataset with DVC
         env:
-          GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/sa.json
         run: |
           dvc pull -r gdrive_remote
 
