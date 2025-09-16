@@ -2,7 +2,6 @@ import os
 import mlflow
 import mlflow.sklearn
 import pandas as pd
-from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
@@ -19,13 +18,15 @@ X = df.drop("target", axis=1)
 y = df["target"]
 
 # Split data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
 
 # Aktifkan autolog MLflow
 mlflow.sklearn.autolog()
 
-# Folder artifact yang aman untuk GitHub Actions / Linux
-artifact_dir = "artifacts"
+# Ambil artifact folder dari environment, fallback ke 'mlruns' jika tidak ada
+artifact_dir = os.getenv("MLFLOW_ARTIFACT_URI", "mlruns")
 os.makedirs(artifact_dir, exist_ok=True)
 
 with mlflow.start_run():
