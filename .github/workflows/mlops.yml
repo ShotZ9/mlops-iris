@@ -24,7 +24,7 @@ jobs:
           pip install -r requirements.txt
           pip install mlflow "dvc[gdrive]>=3.50.0" scikit-learn
 
-      # (Opsional) Debug isi secret, pastikan kebaca sebagai JSON
+      # (Opsional) Debug isi secret, pastikan valid JSON
       - name: Debug Secret Format
         run: |
           echo "$GDRIVE_CREDENTIALS_DATA" | jq . > /dev/null
@@ -33,12 +33,15 @@ jobs:
 
       - name: Save service account credentials
         run: |
-          echo "${{ secrets.GDRIVE_CREDENTIALS_DATA }}" > $GITHUB_WORKSPACE/sa.json
-        shell: bash
+          mkdir -p .dvc
+          echo "${{ secrets.GDRIVE_CREDENTIALS_DATA }}" > .dvc/sa.json
+
+      - name: Configure DVC remote for service account
+        run: |
+          dvc remote modify gdrive_remote gdrive_use_service_account true
+          dvc remote modify gdrive_remote gdrive_service_account_json_file_path .dvc/sa.json
 
       - name: Pull dataset with DVC
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/sa.json
         run: |
           dvc pull -r gdrive_remote
 
