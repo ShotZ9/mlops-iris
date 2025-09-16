@@ -16,10 +16,6 @@ from sklearn.metrics import (
 mlruns_path = os.path.abspath("./mlruns")
 mlflow.set_tracking_uri(f"file://{mlruns_path}")
 
-# Pastikan folder artifact ada
-artifact_dir = os.path.join(mlruns_path, "artifacts")
-os.makedirs(artifact_dir, exist_ok=True)
-
 # Load dataset dari CSV (versi DVC)
 df = pd.read_csv("data/iris.csv")
 X = df.drop("target", axis=1)
@@ -33,7 +29,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 # Aktifkan autolog MLflow
 mlflow.sklearn.autolog()
 
-with mlflow.start_run():
+with mlflow.start_run() as run:
     # Inisialisasi model
     model = RandomForestClassifier(n_estimators=100, random_state=42)
     model.fit(X_train, y_train)
@@ -54,8 +50,8 @@ with mlflow.start_run():
     mlflow.log_metric("recall", rec)
     mlflow.log_metric("f1_score", f1)
 
-    # Log confusion matrix sebagai artifact JSON
-    cm_path = os.path.join(artifact_dir, "confusion_matrix.json")
+    # Log confusion matrix sebagai artifact JSON di subfolder run
+    cm_path = "confusion_matrix.json"  # relatif terhadap run
     mlflow.log_dict({"confusion_matrix": cm}, cm_path)
 
     # Print metrik ke console
@@ -63,4 +59,4 @@ with mlflow.start_run():
     print(f"Precision: {prec:.4f}")
     print(f"Recall: {rec:.4f}")
     print(f"F1 Score: {f1:.4f}")
-    print("Confusion matrix saved to:", cm_path)
+    print(f"Confusion matrix saved to run artifact: {cm_path}")
