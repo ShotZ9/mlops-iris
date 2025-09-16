@@ -24,14 +24,16 @@ jobs:
           pip install -r requirements.txt
           pip install mlflow dvc[all] scikit-learn
 
-      - name: Setup gdrive credential
+      - name: Setup GDrive credentials for DVC
         run: |
           echo "${{ secrets.GDRIVE_CREDENTIALS }}" > sa.json
-          dvc remote modify gdrive_remote gdrive_service_account_json_file sa.json
+          mkdir -p .dvc
+          echo '[remote "gdrive_remote"]' > .dvc/config.local
+          echo '    gdrive_service_account_json_file = sa.json' >> .dvc/config.local
 
       - name: Pull dataset with DVC
         run: |
-          dvc pull
+          dvc pull -r gdrive_remote
 
       - name: Run training with MLflow
         run: |
