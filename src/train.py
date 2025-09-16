@@ -9,7 +9,6 @@ from sklearn.metrics import (
     precision_score,
     recall_score,
     f1_score,
-    confusion_matrix,
 )
 
 # Paksa MLflow pakai folder lokal 'mlruns' di project
@@ -29,7 +28,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 # Aktifkan autolog MLflow
 mlflow.sklearn.autolog()
 
-with mlflow.start_run() as run:
+with mlflow.start_run():
     # Inisialisasi model
     model = RandomForestClassifier(n_estimators=100, random_state=42)
     model.fit(X_train, y_train)
@@ -42,7 +41,6 @@ with mlflow.start_run() as run:
     prec = precision_score(y_test, y_pred, average="macro")
     rec = recall_score(y_test, y_pred, average="macro")
     f1 = f1_score(y_test, y_pred, average="macro")
-    cm = confusion_matrix(y_test, y_pred).tolist()  # convert ke list biar bisa JSON
 
     # Log metrik manual
     mlflow.log_metric("accuracy", acc)
@@ -50,13 +48,8 @@ with mlflow.start_run() as run:
     mlflow.log_metric("recall", rec)
     mlflow.log_metric("f1_score", f1)
 
-    # Log confusion matrix sebagai artifact JSON di subfolder run
-    cm_path = "confusion_matrix.json"  # relatif terhadap run
-    mlflow.log_dict({"confusion_matrix": cm}, cm_path)
-
     # Print metrik ke console
     print(f"Accuracy: {acc:.4f}")
     print(f"Precision: {prec:.4f}")
     print(f"Recall: {rec:.4f}")
     print(f"F1 Score: {f1:.4f}")
-    print(f"Confusion matrix saved to run artifact: {cm_path}")
