@@ -25,17 +25,17 @@ jobs:
           pip install mlflow "dvc[s3]>=3.50.0" scikit-learn
 
       # Setup DVC remote for Backblaze B2 (optional)
-      # - name: Configure DVC remote
-      #   run: |
-      #     dvc remote add -d -f b2remote s3://$B2_BUCKET_NAME
-      #     dvc remote modify b2remote endpointurl $B2_ENDPOINT
-      #     dvc remote modify b2remote access_key_id $B2_KEY_ID
-      #     dvc remote modify b2remote secret_access_key $B2_APP_KEY
-      #   env:
-      #     B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
-      #     B2_ENDPOINT: ${{ secrets.B2_ENDPOINT }}
-      #     B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
-      #     B2_APP_KEY: ${{ secrets.B2_APP_KEY }}
+      - name: Configure DVC remote
+        run: |
+          dvc remote add -d -f b2remote s3://$B2_BUCKET_NAME
+          dvc remote modify b2remote endpointurl $B2_ENDPOINT
+          dvc remote modify b2remote access_key_id $B2_KEY_ID
+          dvc remote modify b2remote secret_access_key $B2_APP_KEY
+        env:
+          B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+          B2_ENDPOINT: ${{ secrets.B2_ENDPOINT }}
+          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+          B2_APP_KEY: ${{ secrets.B2_APP_KEY }}
 
       - name: Pull dataset with DVC
         run: dvc pull -r b2remote
