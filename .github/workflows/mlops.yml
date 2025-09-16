@@ -24,15 +24,16 @@ jobs:
           pip install -r requirements.txt
           pip install mlflow "dvc[gdrive]>=3.50.0" scikit-learn
 
-      - name: Debug
+      # (Opsional) Debug isi secret, pastikan kebaca sebagai JSON
+      - name: Debug Secret Format
         run: |
-          echo "$GDRIVE_CREDENTIALS_DATA" | jq .
+          echo "$GDRIVE_CREDENTIALS_DATA" | jq . > /dev/null
         env:
           GDRIVE_CREDENTIALS_DATA: ${{ secrets.GDRIVE_CREDENTIALS_DATA }}
 
       - name: Save service account credentials
         run: |
-          echo '${{ secrets.GDRIVE_CREDENTIALS_DATA }}' > sa.json
+          echo "${{ secrets.GDRIVE_CREDENTIALS_DATA }}" > $GITHUB_WORKSPACE/sa.json
         shell: bash
 
       - name: Pull dataset with DVC
