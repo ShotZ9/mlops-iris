@@ -44,7 +44,7 @@ mlops-iris/
    ```bash
    git clone https://github.com/ShotZ9/mlops-iris.git
    cd mlops-iris
-```
+    ```
 
 2. Buat virtual environment:
 
@@ -126,5 +126,3 @@ File workflow: `.github/workflows/mlops.yml`
 ## 👨‍💻 Author
 
 * **Yoel Amadeo Pratomo** ([@ShotZ9](https://github.com/ShotZ9))
-
-```
